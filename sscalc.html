@@ -1,0 +1,408 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+<style>
+ h1
+ {
+   font-family: sans-serif;
+   font-size: 1em;
+   font-weight: 200;
+ }
+ .hex-input, button
+ {
+   width: 2em;
+   text-align: center;
+ }
+ 
+ .reference .hex-input
+ {
+   background-color: #ffffcc;
+   border-radius: 3px;
+ }
+
+ #dword1 tr
+ {
+   background-color: blue;
+ }
+
+ #dword2 tr
+ {
+   background-color: red;
+ }
+
+ #dword1 tr .copy, #dword2 tr .copy
+ {
+   background-color: white;
+ }
+
+ .fa-copy
+ {
+   color: lightgrey;
+ }
+
+ .fa-copy:hover
+ {
+   color: #ff9a00;
+   cursor: pointer;
+ }
+
+ div.instructions, div#asm-code
+ {
+   margin-top: 1em;
+   margin-left: 0.5em;
+   font-family: monospace;
+   font-size: 0.9em;
+ }
+
+ div#asm-code
+ {
+   width: 10em;
+   overflow-wrap: anywhere;
+ }
+</style>
+</head>
+<body>
+<h1>
+SUB shellcode calculator
+</h1>
+<table>
+ <tr class="reference">
+  <td>
+   <input id="a1" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td>
+   <input id="a2" class="hex-input"  onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td>
+   <input id="a3" class="hex-input"  onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td>
+   <input id="a4" class="hex-input"  onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td></td>
+ </tr>
+ <tbody id="dword1">
+ <tr>
+  <td>
+   <button onclick="btn_inc('b1');">+</button>
+  </td>
+  <td>
+   <button onclick="btn_inc('b2');">+</button>
+  </td>
+  <td>
+   <button onclick="btn_inc('b3');">+</button>
+  </td>
+  <td>
+   <button onclick="btn_inc('b4');">+</button>
+  </td>
+  <td class="copy"></td>
+ </tr>
+ <tr>
+  <td>
+   <input id="b1" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="4d">
+  </td>
+  <td>
+   <input id="b2" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="4d">
+  </td>
+  <td>
+   <input id="b3" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="4d">
+  </td>
+  <td>
+   <input id="b4" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="4d">
+  </td>
+  <td class="copy"><i class="fas fa-copy" onclick="copyhex('b');"></i></td>
+ </tr>
+ <tr>
+  <td>
+   <button onclick="btn_dec('b1');">-</button>
+  </td>
+  <td>
+   <button onclick="btn_dec('b2');">-</button>
+  </td>
+  <td>
+   <button onclick="btn_dec('b3');">-</button>
+  </td>
+  <td>
+   <button onclick="btn_dec('b4');">-</button>
+  </td>
+  <td class="copy"></td>
+ </tr>
+ </tbody>
+ <tbody id="dword2">
+ <tr>
+  <td>
+   <button onclick="btn_inc('d1');">+</button>
+  </td>
+  <td>
+   <button onclick="btn_inc('d2');">+</button>
+  </td>
+  <td>
+   <button onclick="btn_inc('d3');">+</button>
+  </td>
+  <td>
+   <button onclick="btn_inc('d4');">+</button>
+  </td>
+  <td class="copy"></td>
+ </tr>
+ <tr>
+  <td>
+   <input id="d1" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td>
+   <input id="d2" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td>
+   <input id="d3" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td>
+   <input id="d4" class="hex-input" onblur="padme(this); calc();" maxlength="2" value="00">
+  </td>
+  <td class="copy"><i class="fas fa-copy" onclick="copyhex('d');"></i></td>
+ </tr>
+ <tr>
+  <td>
+   <button onclick="btn_dec('d1');">-</button>
+  </td>
+  <td>
+   <button onclick="btn_dec('d2');">-</button>
+  </td>
+  <td>
+   <button onclick="btn_dec('d3');">-</button>
+  </td>
+  <td>
+   <button onclick="btn_dec('d4');">-</button>
+  </td>
+  <td class="copy"></td>
+ </tr>
+ <tr>
+ </tbody>
+  <td>
+   <input id="c1" class="hex-input" maxlength="2" disabled>
+  </td>
+  <td>
+   <input id="c2" class="hex-input" maxlength="2" disabled>
+  </td>
+  <td>
+   <input id="c3" class="hex-input" maxlength="2" disabled>
+  </td>
+  <td>
+   <input id="c4" class="hex-input" maxlength="2" disabled>
+  </td>
+  <td class="copy"><i class="fas fa-copy" onclick="copyhex('c');"></i></td>
+ </tr>
+</table>
+<div class="instructions">
+AND EAX,554E4D4A<br/>
+AND EAX,2A313235<br/>
+<div id="instr-code"></div>
+PUSH EAX
+</div>
+<div id="asm-code"></div>
+<script>
+String.prototype.lpad = function(padString, length)
+{
+  var str = this;
+  while (str.length < length)
+    str = padString + str;
+  return str;
+}
+
+function padme(obj)
+{
+  val = obj.value;
+  obj.value = val.lpad("0", 2);
+}
+
+function hex(number)
+{
+  if (number < 0)
+  {
+    number = 0xFFFFFFFF + number + 1;
+  }
+
+  return number.toString(16);
+}
+
+function btn_inc(tag)
+{
+  obj = document.getElementById(tag);
+  num = parseInt("0x"+obj.value);
+  num = num + 1;
+  num = parseInt("0x"+hex(num))
+  obj.value = hex(num).lpad("0",2);
+  calc();
+}
+
+function btn_dec(tag)
+{
+  obj = document.getElementById(tag);
+  num = parseInt("0x"+obj.value);
+  num = num - 1;
+  num = parseInt("0x"+hex(num))
+  obj.value = hex(num).lpad("0",2);
+  calc();
+}
+
+function calc()
+{
+  a = document.getElementById("a1").value +
+      document.getElementById("a2").value +
+      document.getElementById("a3").value +
+      document.getElementById("a4").value ;
+
+  b = document.getElementById("b1").value +
+      document.getElementById("b2").value +
+      document.getElementById("b3").value +
+      document.getElementById("b4").value ;
+
+  d = document.getElementById("d1").value +
+      document.getElementById("d2").value +
+      document.getElementById("d3").value +
+      document.getElementById("d4").value ;
+
+  aa = parseInt("0x" + a);
+  bb = parseInt("0x" + b);
+  dd = parseInt("0x" + d);
+
+  maa = 0x0 - aa
+
+  c = parseInt("0x"+hex(maa)) - parseInt("0x"+hex(bb)) - parseInt("0x"+hex(dd));
+
+  z = hex(c).lpad("0", 8);
+
+  document.getElementById("c1").value = z.substr(0,1) + z.substr(1,1);
+  document.getElementById("c2").value = z.substr(2,1) + z.substr(3,1);
+  document.getElementById("c3").value = z.substr(4,1) + z.substr(5,1);
+  document.getElementById("c4").value = z.substr(6,1) + z.substr(7,1);
+
+  // calculate shellcode
+  clipy = "AND EAX,0x554E4D4A\nAND EAX,0x2A313235\n";
+  asm = "\\x25\\x4A\\x4D\\x4E\\x55\\x25\\x35\\x32\\x31\\x2A";
+
+  bb = hex(bb).lpad("0", 8);
+  instr = "SUB EAX,0x" + bb + "<br/>\n";
+  clipy = clipy + "SUB EAX,0x" + bb + "\n";
+  asm = asm + "\\x2D\\x"+bb.substr(6,2)+"\\x"+bb.substr(4,2)+"\\x"+bb.substr(2,2)+"\\x"+bb.substr(0,2);
+  if (dd != 0)
+  {
+    dd = hex(dd).lpad("0", 8);
+    instr = instr + "SUB EAX,0x" + dd + "<br/>\n";
+    clipy = clipy + "SUB EAX,0x" + dd + "\n";
+    asm = asm + "\\x2D\\x"+dd.substr(6,2)+"\\x"+dd.substr(4,2)+"\\x"+dd.substr(2,2)+"\\x"+dd.substr(0,2);
+  }
+
+  z = hex(z).lpad("0", 8);
+  instr = instr + "SUB EAX,0x" + z + "<br/>\n";
+  clipy = clipy + "SUB EAX,0x" + z + "\n";
+  clipy = clipy + "PUSH EAX\n";
+  asm = asm + "\\x2D\\x"+z.substr(6,2)+"\\x"+z.substr(4,2)+"\\x"+z.substr(2,2)+"\\x"+z.substr(0,2);
+  asm = asm + "\\x50";
+
+  //copy shellcode to clipboard
+  copyTextToClipboard(clipy);
+
+  // update shellcode
+  document.getElementById("instr-code").innerHTML = instr;
+  document.getElementById("asm-code").innerHTML = asm;
+}
+
+function copyTextToClipboard(text)
+{
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function(err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+}
+
+function copyhex(tag)
+{
+  n = document.getElementById(tag+"1").value +
+      document.getElementById(tag+"2").value +
+      document.getElementById(tag+"3").value +
+      document.getElementById(tag+"4").value ;
+  copyTextToClipboard(n);
+}
+
+const target1 = document.querySelector('#a1');
+target1.addEventListener('paste', (event) => {
+  let paste = (event.clipboardData || window.clipboardData).getData('text');
+  if (paste.substr(0,2) == "\\x")
+  {
+    paste = paste.replace(/\\x/g, "");
+    paste = "0x" + paste.lpad("0", 8);
+    console.log(paste);
+  }
+  else if (paste.substr(0,2) != "0x")
+  {
+    paste = "0x" + paste.lpad("0", 8);
+    console.log(paste);
+  }
+  num = hex(parseInt(paste)).lpad("0", 8);
+  document.getElementById("a1").value = num.substr(0,1) + num.substr(1,1);
+  document.getElementById("a2").value = num.substr(2,1) + num.substr(3,1);
+  document.getElementById("a3").value = num.substr(4,1) + num.substr(5,1);
+  document.getElementById("a4").value = num.substr(6,1) + num.substr(7,1);
+
+  calc();
+
+  event.preventDefault();
+});
+
+const target2 = document.querySelector('#b1');
+target2.addEventListener('paste', (event) => {
+  let paste = (event.clipboardData || window.clipboardData).getData('text');
+  if (paste.substr(0,2) == "\\x")
+  {
+    paste = paste.replace(/\\x/g, "");
+    paste = "0x" + paste.lpad("0", 8);
+    console.log(paste);
+  }
+  else if (paste.substr(0,2) != "0x")
+  {
+    paste = "0x" + paste.lpad("0", 8);
+    console.log(paste);
+  }
+  num = hex(parseInt(paste)).lpad("0", 8);
+  document.getElementById("b1").value = num.substr(0,1) + num.substr(1,1);
+  document.getElementById("b2").value = num.substr(2,1) + num.substr(3,1);
+  document.getElementById("b3").value = num.substr(4,1) + num.substr(5,1);
+  document.getElementById("b4").value = num.substr(6,1) + num.substr(7,1);
+
+  calc();
+
+  event.preventDefault();
+});
+
+const target3 = document.querySelector('#d1');
+target3.addEventListener('paste', (event) => {
+  let paste = (event.clipboardData || window.clipboardData).getData('text');
+  if (paste.substr(0,2) == "\\x")
+  {
+    paste = paste.replace(/\\x/g, "");
+    paste = "0x" + paste.lpad("0", 8);
+    console.log(paste);
+  }
+  else if (paste.substr(0,2) != "0x")
+  {
+    paste = "0x" + paste.lpad("0", 8);
+    console.log(paste);
+  }
+  num = hex(parseInt(paste)).lpad("0", 8);
+  document.getElementById("d1").value = num.substr(0,1) + num.substr(1,1);
+  document.getElementById("d2").value = num.substr(2,1) + num.substr(3,1);
+  document.getElementById("d3").value = num.substr(4,1) + num.substr(5,1);
+  document.getElementById("d4").value = num.substr(6,1) + num.substr(7,1);
+
+  calc();
+
+  event.preventDefault();
+});
+
+</script>
+</body>
+</html>
