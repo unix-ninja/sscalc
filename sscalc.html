@@ -342,6 +342,7 @@ target1.addEventListener('paste', (event) => {
     paste = "0x" + paste.lpad("0", 8);
     console.log(paste);
   }
+  paste = paste.replace(/ /g, "");
   num = hex(parseInt(paste)).lpad("0", 8);
   document.getElementById("a1").value = num.substr(0,1) + num.substr(1,1);
   document.getElementById("a2").value = num.substr(2,1) + num.substr(3,1);
